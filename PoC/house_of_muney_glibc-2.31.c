@@ -39,7 +39,7 @@
 #define ELF64_ST_INFO(bind, type) (((bind) << 4) | ((type) & 0x0F)) // Construct st_info from binding and type
 #define STB_GLOBAL          1           // "exit" is global symbol
 #define STT_FUNC            2           // "exit" is a code object
-#define STV_DEFAULT	        0           // "exit" is default-visible, globally exported function
+#define STV_DEFAULT         0           // "exit" is default-visible, globally exported function
 #define SHN_EXIT            0x000f      // "exit" is defined in section #15
 #define SIZE_EXIT           0x20        // size for "exit" instructions is close to 0x20
 
