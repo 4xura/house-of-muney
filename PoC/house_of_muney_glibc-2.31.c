@@ -44,7 +44,7 @@
 #define SIZE_EXIT           0x20        // size for "exit" instructions is close to 0x20
 
 // Calculated hash for symbol (use new hash method from dl-new-hash.h for latest glibc release)
-#define NEW_HASH			0x7c967e3f	// dl_new_hash("exit")
+#define NEW_HASH            0x7c967e3f  // dl_new_hash("exit")
 
 // Caculate distance (offset)
 #define DISTANCE(ptr1, ptr2) ((ptrdiff_t)((uint8_t *)(ptr1) - (uint8_t *)(ptr2)))
