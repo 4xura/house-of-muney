@@ -233,8 +233,8 @@ int main() {
      *    	.dynsym  : r--p
      *
      *    They are marked read-only in /proc/self/maps
-	 *
-	 *  - In House of Muney:
+     *
+     *  - In House of Muney:
      *    After the munmap() triggered via free(mmap_chunk) releases parts of the libc mapping (like .gnu.hash, .dynsym),
      *    a subsequent malloc() (which becomes an mmap() internally) reclaims the same virtual memory range.
      *    But with read-write permissions!
@@ -277,7 +277,7 @@ int main() {
      *           6      |       2     Elf64_Section st_shndx;   // Section index
      *           8      |       8     Elf64_Addr st_value;      // Resolved address (Hijack in exploit)
      *          16      |       8     Elf64_Xword st_size;      // Size of the object (usually 0 for funcs like exit)
-	 *
+     *
      *                              total size (bytes):   24 
      *                         }
      */
