@@ -2,7 +2,7 @@
  * Title   : PoC for House of Muney  
  * Author  : Axura
  * Lab	   : glibc-2.31-0ubuntu9.9 (Ubuntu 20.04)
- * Website : https://4xura.com/house-of-muney
+ * Website : https://4xura.com/pwn/heap/house-of-muney/
  * Compile : gcc -Wl,-z,lazy -g -o house_of_muney_glibc-2.31 house_of_muney_glibc-2.31.c
  *           (Some system may apply NOW to pre-resolve all symbols in libc by default, 
  *			 So we can use the `-z,lazy` flag in compilation to enable lazy binding)
