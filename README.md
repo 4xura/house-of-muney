@@ -19,7 +19,7 @@ On Kali with the listed glibc 2.43 build:
 
 ```sh
 gcc -O0 -Wall -Wextra -Werror -fPIE -pie -pthread \
-  -fno-builtin-getenv -Wl,-z,lazy \
+  -fstack-protector-strong -Wl,-z,relro,-z,now,-z,noexecstack \
   -o /tmp/house_of_muney_glibc-2.43 PoC/house_of_muney_glibc-2.43.c
 printf 'echo MUNEY_SHELL_OK\nexit\n' | /tmp/house_of_muney_glibc-2.43
 ```
@@ -29,7 +29,7 @@ the matching Fedora 39 loader and libc directory:
 
 ```sh
 gcc -O0 -Wall -Wextra -Werror -fPIE -pie -pthread \
-  -fno-builtin-getenv -Wl,-z,lazy \
+  -fstack-protector-strong -Wl,-z,relro,-z,now,-z,noexecstack \
   -o /tmp/house_of_muney_glibc-2.38 PoC/house_of_muney_glibc-2.38.c
 LD238=/path/to/ld-linux-x86-64.so.2
 LIB238_DIR=/path/to/matching-libc-directory
@@ -38,9 +38,11 @@ printf 'echo MUNEY_SHELL_OK\nexit\n' | \
 ```
 
 Both runs should show the forged `free` returning, a replacement `malloc` at
-the original address, GNU hash table edits, and `MUNEY_SHELL_OK` from the
-spawned shell. `readelf -W -r` on either compiled binary should show an
-unresolved `R_X86_64_JUMP_SLOT` for `getenv`.
+the original address, GNU hash table edits, a `dlsym` result equal to
+`system`, and `MUNEY_SHELL_OK` from the spawned shell. `checksec` on either
+compiled binary should report Full RELRO, canary, NX and PIE.
+Both version-specific PoCs passed 20/20 fresh process runs with those
+protections enabled on their listed runtimes.
 
 ## Why the new path uses a worker
 
@@ -50,8 +52,10 @@ so the original single-thread path crashes. Each modern PoC allocates the
 victim first, starts a worker with TLS below it, and exits the main thread.
 The worker enlarges and frees the victim, reclaims the hole, restores libc's
 lookup metadata, then explicitly forges the GNU hash bloom word, bucket and
-chain entry. Finally it changes `getenv`'s `.dynsym` value to `system` and
-triggers its first lazy PLT call with `/bin/sh`.
+chain entry. Finally it changes `getenv`'s `.dynsym` value to `system`, makes
+a fresh `dlsym(RTLD_DEFAULT, "getenv")` lookup, and calls the returned address
+with `/bin/sh`. Full RELRO resolves the executable's PLT at startup, but a
+later `dlsym` still consults libc's GNU hash and dynamic symbol table.
 
 These programs are mechanism demonstrations. Their direct size overwrite,
 saved copy of libc metadata, and `dladdr` lookup are instrumentation; a pwn

